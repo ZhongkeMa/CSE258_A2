@@ -58,7 +58,7 @@ Rating Prediction of Clothes Based On Review Text And Size Assessment
 
 \author{Zhongke Ma - A53267693% <-this % stops a space
 	\\Zijun Zhao - A53318821% <-this % stops a space
-	\\Member 3
+	\\Liting Yang 
 	
 }
 
@@ -108,7 +108,9 @@ This report illustrates a model used to predict final rating by predicting suita
 	
 	\subsection{Features of Size Determinants and Size} 
 	First of all, in the size prediction, every features which might be associated with the size should be taken into consideration. However, there is no feature which are contained in every record. In another word, features like age, height, weight, bust size, cup size and so on should influence the size but those features mentioned above are not provided by every customer. That is one of the interesting parts in the dataset. To make sure precise predictions, the average of each feature is used to fill up when this data is missing in a record.
+	
 	On top of that, in the size prediction, the range of size is extremely large, which is from 1 to 58. In a similar way, some size determinants, including age, height, weight and cup size, encounter the same situation. In other word, there are some extreme values in the dataset. But fortuneately, the amount of extreme values is too small compared to the size of dataset. This is the second interesting part in the dataset. Thus, the impact of extreme values can be ignored.
+	
 	What is more, some features, such as shoes size, only appears in few customers. At the beginning, we want to consider these parameters into size determinants. Since these parameters appears too little and they are lack of being representative, they are erased from the list of size determinants. This is an interesting finding in the dataset as well. 
 
 	\subsection{Review Text}
@@ -148,12 +150,91 @@ There are abbreviations, punctuations, numbers and even some modal particles in 
 \section{Predictive Task}
 According to the profiles provided by each customer, firstly we predict the suitable size for every customer. Secondly, compare the prediction to the actual size, take the difference and review text into consideration, the final rating of every purchase will be predicted ny this model finally.
 Thus, there are two tasks in this model. The first task is predicting whether the size is suitable for every customer according to two profiles provided , such as height, weight, age, bust size, cup size and so on. And the second task is considering the difference bewteen the prediction and the actual size customers buy,
- and build a model of text mining, which extracts review texts and analyze sentiment, calculate TFIDF and so on in order to predict final rating of every customer.
+and build a model of text mining, which extracts review texts and analyze sentiment, calculate TFIDF and so on in order to predict final rating of every customer.
+
+\subsection{Size prediction}
+The most straightforward method to predict whether the size is suitable is supervised learning and regression. To measure the model and get better result, mean squared error and R Square are used as evaluation and the relevant baseline of MSE is 28.591 as well as the relevant baseline of R Square is 0.58. 
+
+After calculating mean squared errors of linear regression under different circumstances, the features in Size determinants are height, weight, age, bust size. The mse is smallest after considering them all in linear regression. 
+
+In terms of processing these features, first of all, reading all data and calculating the average number of each feature. Secondly, since not all customers provide their profiles, if one feature is missing, the feature of this customer is set to be the average number. For example, if the age of a customer is unknown and the average age is 28, the age of the customer is set to be 28.
+
+Secondly, the next task is to qualified features. There is no doubt that just turn some features, like height and weight, into number by calculating and normalizing. For example, the unit of height is inch. If the height of a customer is 5 feet and 8 inches, the height of a customer will be recorded as 68 inches. But here is the problem, what about the bust size, such as 35A? How to handle with the letter A? 
+The method is that using two separated keys to store the feature bust size, one is used to store the previous number 35 and the other is used to store the letter, which means the cup size. ASCII code is used to store the cup size. Each letter is stored by reducing the value of ASCII of A and adding one.  
+
+From what have been discussed above, those are how a size prediction task can be studied on this dataset. 
+
+\subsection{Rating prediction}
+
 
 
 \section{Model}
+\subsection{Regression}
+To improve the accuracy of the supervised regression to predict suitable size, several regression methods have been tried, including linear regression, ridge regression and lasso regression. 
+
+The detailed results of each regression is shown below:
+
+\begin{table}[htb]
+	\caption{Prediction with different regression methods}  
+	\begin{center}  
+		\begin{tabu} to 1\textwidth{X[3,c]|X[1,b]|X[2,l]|X[3,c]|X[2,m]|X[1,c]}  
+			%0.8\textwidth   为设置表格宽度  
+			%X[c]      表示这一列居中，所占比例为1，相当于X[1,c]  
+			%X[3,c]   表示这一列居中，所占比例为3，这列的宽度是X[c]列的3倍  
+			\hline  
+			Regression / C  &Linear             &Ridge      &Lasso\\  
+			\hline  
+			MSE    &28.591      &28.505          &28.925\\  
+			Score   &0.58      &0.60           &0.59\\  
+			\hline  
+		\end{tabu}  
+	\end{center}  
+\end{table} 
+
+In the linear regression, just collect all features and predict. As it is shown in the table, linear regression might have bad generalize performance in the unknown dataset.
+
+For better performance and avoid overfitting, ridge regression and lasso regression are taken into consideration.
+
+There is a normalized parameter called alpha to solve the dilemma linear regression occurs. But the parameter alpha could not be too small or too big. Otherwise, it will lead to under fitting if it is too big as well as it will cause overfitting if it is too small. 
+And ridge regression will be the same as linear regression if alpha is equal to zero.
+To find the best parameter, use the function in the sklearn and the alpha which is 0.001 performs best.
+The function of lasso.score() and the function of ridge.score() can be used to calculating the R square of corresponding regression. The R square of linear regression is calculated by programming.
+
+Linear regression:
+
+Strength:
+
+1. Still perform when the number of features is more than the number of sample.
+
+2. Prevent overfitting.
+
+Weakness:
+
+Be sensitive to extreme values.
+
+Ridge regression:
+
+Strength:
+
+1. Fast computation.
+
+2. It is easy to understand and explain each parameters.
+
+Weakness:
+
+It is hard to find a proper parameter because the chance are that the punishment lead to under fitting.
+
+Lasso regression:
+
+Strength:
+Lasso is preferred over ridge regression when the solution is believed to have sparse features because L1 regularization promotes sparsity while L2 regularization does not.
+
+Weakness:
+
+It is only useful when it is restricted to consider models which are linear in the parameters to be estimated.
+
 \subsection{Feature Extraction}
-To improve the accuracy of the supervised text classification, I tried many feature extraction methods. The detailed results of the CountVectorizer method and TfidfVectorizer are shown in Tab 1 and Tab 2. The corresponding analysis are as the following:
+To improve the accuracy of the supervised text classification, many feature extraction methods have been tried. The detailed results of the CountVectorizer method and TfidfVectorizer are shown in Tab 2 and Tab 3. The corresponding analysis are as the following:
 
 \begin{table}[htb]
 	\caption{CountVectorize with different feature extraction methods}  

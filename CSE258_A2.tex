@@ -88,18 +88,18 @@ This report illustrates a model used to predict final rating by predicting suita
 
 	\lstset{language=C}
 	\begin{lstlisting}
-	{"fit": "fit", 
-	 "age": "16", 
-	 "size": 4, 
-	 "item_id": "1063761", 
-	 "rating": "10", 
-	 "rented for": "party", 
-	 "review_text": "This hugged in all the right places! It was a perfect dress for my event and I received so many compliments on it. Not to mention customer service was great getting this to me in less than 24 hours!", 
-	 "review_summary": "It was a great time to celebrate the (almost) completion of my first year of law school.", 
-	 "category": "sheath", 
-	 "height": "5' 4\"", 
-	 "user_id": "360448", 
-	 "review_date": "December 14, 2015"
+	{"fit": "fit",  // the customer experience
+	 "age": "16", // the age of the customer
+	 "size": 4,  // the size rent by the customer
+	 "item_id": "1063761",  // a hashed identifier for this item 
+	 "rating": "10", // the rating of the clothes
+	 "rented for": "party", // the reason for renting the clothes
+	 "review_text": "This hugged in all the right places! It was a perfect dress for my event and I received so many compliments on it. Not to mention customer service was great getting this to me in less than 24 hours!",  // text of the review
+	 "review_summary": "It was a great time to celebrate the (almost) completion of my first year of law school.", // summary of the review
+	 "category": "sheath", // the category of the Clothes
+	 "height": "5' 4\"", // the height of the customer
+	 "user_id": "360448", // the ID of the user, this is a hashed user identifier 
+	 "review_date": "December 14, 2015" // the date of posting the review
 	 }
 	\end{lstlisting}
 	
@@ -109,6 +109,7 @@ This report illustrates a model used to predict final rating by predicting suita
 	\subsection{Features of Size Determinants and Size} 
 	1. In the size prediction, every features which might be associated with the size should be taken into consideration. However, there is no feature which are contained in every record. In another word, features like age, height, weight, bust size, cup size and so on should influence the size but those features mentioned above are not provided by every customer. That is one of the interesting parts in the dataset. To make sure precise predictions, the average of each feature is used to fill up when this data is missing in a record.
 	2. In the size prediction, the range of size is extremely large, which is from 1 to 58. In a similar way, some size determinants, including age, height, weight and cup size, encounter the same situation. In other word, there are some extreme values in the dataset. But fortuneately, the amount of extreme values is too small compared to the size of dataset. This is the second interesting part in the dataset. Thus, the impact of extreme values can be ignored.
+	3. Some features, such as shoes size, only appears in few customers. First of all, we want to consider these parameters into size determinants. Since these parameters appears too little and they are lack of being representative, they are erased from the list of size determinants.
 
 	\subsection{Review Text}
 	In supervised text classification, different stratagies are tried to improve the accuracy. One part of the improvement is achieved by using proper feature extraction methods and the other part of the improvement is achieved by grid searching to find the regularization parameter that leads to the highest accuracy on the development set.

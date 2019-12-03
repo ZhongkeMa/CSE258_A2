@@ -56,8 +56,8 @@ Rating Prediction of Clothes Based On Review Text And Size Assessment
 %         {\tt\small pmisra@cs.wright.edu}}
 %}
 
-\author{Member 1 - A53267693% <-this % stops a space
-	\\Member 2
+\author{Zhongke Ma - A53267693% <-this % stops a space
+	\\Zijun Zhao - A53318821% <-this % stops a space
 	\\Member 3
 	
 }
@@ -75,7 +75,7 @@ Rating Prediction of Clothes Based On Review Text And Size Assessment
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-This report illustrates the difference in performance between a simple lexer of the ac language written in C and another created with Lex, based on their execution time with the same stress example ac program.
+This report illustrates a model used to predict final rating by predicting suitable size and profiles from people. This model is implemented by Python.
 
 \end{abstract}
 
@@ -84,19 +84,34 @@ This report illustrates the difference in performance between a simple lexer of 
 \section{Dataset}
 	
 	In this project, we used Clothing Fit Data from ModCloth and RentTheRunway. Some basic statistics and properties are as followings:
+	Here is one piece example:
+
+	\lstset{language=C}
+	\begin{lstlisting}
+	{"fit": "fit", 
+	 "age": "16", 
+	 "size": 4, 
+	 "item_id": "1063761", 
+	 "rating": "10", 
+	 "rented for": "party", 
+	 "review_text": "This hugged in all the right places! It was a perfect dress for my event and I received so many compliments on it. Not to mention customer service was great getting this to me in less than 24 hours!", 
+	 "review_summary": "It was a great time to celebrate the (almost) completion of my first year of law school.", 
+	 "category": "sheath", 
+	 "height": "5' 4\"", 
+	 "user_id": "360448", 
+	 "review_date": "December 14, 2015"
+	 }
+	\end{lstlisting}
 	
-	
-	
-	need to add
-	
-	
-	
+	In order to find the precise size for every customer and improve prediction of accuracy, only the record that customers give fit feedback are selected to train the model. Thus, there are totally 192462 samples in the dataset. 
 	In order to make full use of the dataset, we will try two extract different features from the the raw data. And these features can be mainly divided into two parts. One is the assessment of whether the size of the cloths bought by the guests fit them or not and the other is to do some data mining on the review texts provided by the guests to analyze their sentiment to their products. Some detailed information about how we model the prediction task and the methods we use to implement the task will be provided in Section 2 and section 3. We will now describe some interesting findings we found from the raw data, which motivate the design of our model in the following sections.
 	
-	\subsection{Features of Size}
-	
+	\subsection{Features of Size Determinants and Size} 
+	1. In the size prediction, every features which might be associated with the size should be taken into consideration. However, there is no feature which are contained in every record. In another word, features like age, height, weight, bust size, cup size and so on should influence the size but those features mentioned above are not provided by every customer. That is one of the interesting parts in the dataset. To make sure precise predictions, the average of each feature is used to fill up when this data is missing in a record.
+	2. In the size prediction, the range of size is extremely large, which is from 1 to 58. In a similar way, some size determinants, including age, height, weight and cup size, encounter the same situation. In other word, there are some extreme values in the dataset. But fortuneately, the amount of extreme values is too small compared to the size of dataset. This is the second interesting part in the dataset. Thus, the impact of extreme values can be ignored.
+
 	\subsection{Review Text}
-	In supervised text classification, I tried different stratagies to improve the accuracy. One part of the improvement is achieved by using proper feature extraction methods and the other part of the improvement is achieved by grid searching to find the regularization parameter that leads to the highest accuracy on the development set.
+	In supervised text classification, different stratagies are tried to improve the accuracy. One part of the improvement is achieved by using proper feature extraction methods and the other part of the improvement is achieved by grid searching to find the regularization parameter that leads to the highest accuracy on the development set.
 	
 	
 \subsection{The Description of The Data And Data Clean-up}
@@ -130,7 +145,9 @@ There are abbreviations, punctuations, numbers and even some modal particles in 
 
 
 \section{Predictive Task}
-
+According to the profiles provided by each customer, firstly we predict the suitable size for every customer. Secondly, compare the prediction to the actual size, take the difference and review text into consideration, the final rating of every purchase will be predicted ny this model finally.
+Thus, there are two tasks in this model. The first task is predicting whether the size is suitable for every customer according to two profiles provided , such as height, weight, age, bust size, cup size and so on. And the second task is considering the difference bewteen the prediction and the actual size customers buy,
+ and build a model of text mining, which extracts review texts and analyze sentiment, calculate TFIDF and so on in order to predict final rating of every customer.
 
 
 \section{Model}
